@@ -5,6 +5,9 @@
 ![Travis Build Status](https://travis-ci.org/GoogleCloudPlatform/gcloud-node.svg)
 [![Coverage Status](https://img.shields.io/coveralls/GoogleCloudPlatform/gcloud-node.svg)](https://coveralls.io/r/GoogleCloudPlatform/gcloud-node?branch=master)
 
+* [Homepage](https://googlecloudplatform.github.io/gcloud-node/)
+* [API Documentation](https://googlecloudplatform.github.io/gcloud-node/#/docs)
+
 This client supports the following Google Cloud services:
 
 * [Google Cloud Datastore](https://developers.google.com/datastore/)
