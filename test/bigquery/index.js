@@ -19,9 +19,7 @@
 'use strict';
 
 var assert = require('assert');
-
 var gcloud = require('../../');
-
 
 describe('BigQuery', function() {
   it('should exist', function() {
