@@ -19,23 +19,14 @@
 'use strict';
 
 var assert = require('assert');
-var BigQuery = require('../../lib/bigquery');
 var Dataset = require('../../lib/bigquery/dataset');
 var Table = require('../../lib/bigquery/table');
 
-describe('BigQuery', function() {
+describe('BigQuery/Dataset', function() {
   var DATASET_ID = 'kittens';
   var ds;
 
   beforeEach(function() {
-    ds = new BigQuery({
-      keyFilename: '/Users/stephen/dev/keyfile.json',
-      projectId: 'nth-circlet-705'
-    }).dataset(DATASET_ID);
-  });
-
-  beforeEach(function() {
-    return;
     ds = new Dataset(DATASET_ID);
     ds.makeReq_ = function(method, path, query, body, callback) {
       callback();

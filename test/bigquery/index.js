@@ -28,14 +28,6 @@ describe('BigQuery', function() {
   var bq;
 
   beforeEach(function() {
-    bq = new BigQuery({
-      keyFilename: '/Users/stephen/dev/keyfile.json',
-      projectId: 'nth-circlet-705'
-    });
-  });
-
-  beforeEach(function() {
-    return;
     bq = new BigQuery({ projectId: PROJECT_ID });
     bq.makeReq_ = function(method, path, query, body, callback) {
       callback();
