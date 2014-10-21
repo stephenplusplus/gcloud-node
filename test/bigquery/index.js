@@ -180,7 +180,7 @@ describe('BigQuery', function() {
 
   describe('getJobs', function() {
     it('should get jobs from the api', function(done) {
-      bq.makeReq_ = function(method, path, query, body, callback) {
+      bq.makeReq_ = function(method, path, query, body) {
         assert.equal(method, 'GET');
         assert.equal(path, '/jobs');
         assert.deepEqual(query, {});
@@ -261,8 +261,6 @@ describe('BigQuery', function() {
       assert.equal(job.id, jobId);
     });
   });
-
-  describe('query', function() {});
 
   describe('makeReq_', function() {});
 });
