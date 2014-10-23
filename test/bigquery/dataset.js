@@ -19,15 +19,17 @@
 'use strict';
 
 var assert = require('assert');
+var BigQuery = require('../../lib/bigquery');
 var Dataset = require('../../lib/bigquery/dataset');
 var Table = require('../../lib/bigquery/table');
 
 describe('BigQuery/Dataset', function() {
   var DATASET_ID = 'kittens';
-  var ds;
+  var bigQuery, ds;
 
   beforeEach(function() {
-    ds = new Dataset(DATASET_ID);
+    bigQuery = new BigQuery();
+    ds = new Dataset(bigQuery, DATASET_ID);
     ds.makeReq_ = function(method, path, query, body, callback) {
       callback();
     };
