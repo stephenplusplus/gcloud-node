@@ -2,77 +2,92 @@
 
 var assert = require('assert');
 var async = require('async');
+var exec = require('methmeth');
 
 var env = require('./env.js');
 var Compute = require('../lib/compute/index.js');
 
 var compute = new Compute(env);
 
-var INSTANCE_NAME_PREFIX = 'gcloud-tests-instance-';
+var VM_NAME_PREFIX = 'gcloud-tests-instance-';
 
-function generateInstanceName() {
-  return INSTANCE_NAME_PREFIX + Date.now();
+function generateVMName() {
+  return VM_NAME_PREFIX + Date.now();
 }
 
-function deleteAllTestInstances(callback) {
-  compute.getInstances({
-    filter: 'name eq .*' + INSTANCE_NAME_PREFIX + '.*'
-  }, function(err, instances) {
+function deleteAllTestVMs(callback) {
+  compute.getVMs({
+    filter: 'name eq ' + VM_NAME_PREFIX + '.*'
+  }, function(err, vms) {
     if (err) {
       callback(err);
       return;
     }
 
-    async.each(instances, function(instance, next) {
-      instance.delete(function(err, operation) {
-        if (err) {
-          next(err);
-          return;
-        }
-
-        operation.onComplete(next);
-      });
-    }, callback);
+    async.each(vms, exec('delete'), callback);
   });
 }
 
 describe('Compute', function() {
-  describe('instances', function() {
-    it('should get a list of instances', function(done) {
-      compute.getInstances(function(err, instances) {
+  var ZONE_NAME = 'us-central1-a';
+  var VM_NAME = generateVMName();
+
+  var zone = compute.zone(ZONE_NAME);
+  var vm;
+
+  before(function(done) {
+    this.timeout(60000);
+
+    var config = {
+      os: 'ubuntu',
+      http: true,
+      zone: zone
+    };
+
+    compute.createVM(VM_NAME, config, function(err, vm_, operation) {
+      assert.ifError(err);
+      vm = vm_;
+      operation.onComplete(done);
+    });
+  });
+
+  after(function(done) {
+    deleteAllTestVMs(done);
+  });
+
+  describe('vms', function() {
+    it('should get a list of vms', function(done) {
+      compute.getVMs(function(err, vms) {
         assert.ifError(err);
-        assert(instances.length > 0);
+        assert(vms.length > 0);
+        done();
+      });
+    });
+
+    it('should access a VM without providing a zone', function(done) {
+      compute.vm(VM_NAME).getTags(function(err, tags) {
+        assert.ifError(err);
+        assert.deepEqual(tags, ['http-server']);
         done();
       });
     });
   });
 
   describe('zones', function() {
-    var ZONE_NAME = 'us-central1-a';
-    var zone = compute.zone(ZONE_NAME);
-
-    describe('instances', function() {
-      after(function(done) {
-        this.timeout(60000);
-        deleteAllTestInstances(done);
+    describe('vms', function() {
+      it('should get a list of vms', function(done) {
+        zone.getVMs(function(err, vms) {
+          assert.ifError(err);
+          assert(vms.length > 0);
+          done();
+        });
       });
 
-      it('should create an instance', function(done) {
-        var name = generateInstanceName();
-
-        var config = {
-          os: 'ubuntu'
-        };
-
-        zone.createInstance(name, config, function(err, instance, operation) {
+      it('should access a child VM', function(done) {
+        zone.vm(VM_NAME).getTags(function(err, tags) {
           assert.ifError(err);
-
-          assert.strictEqual(instance.name, name);
-
-          operation.onComplete(function(err) {
-            assert.ifError(err);
-            instance.delete(done);
-          });
+          assert.deepEqual(tags, ['http-server']);
+          done();
         });
       });
     });

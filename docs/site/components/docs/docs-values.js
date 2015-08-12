@@ -56,10 +56,6 @@ angular.module('gcloud.docs')
           url: '/firewall'
         },
         {
-          title: 'Instance',
-          url: '/instance'
-        },
-        {
           title: 'Network',
           url: '/network'
         },
@@ -74,6 +70,10 @@ angular.module('gcloud.docs')
         {
           title: 'Snapshot',
           url: '/snapshot'
+        },
+        {
+          title: 'VM',
+          url: '/vm'
         },
         {
           title: 'Zone',
