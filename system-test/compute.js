@@ -275,6 +275,28 @@ describe('Compute', function() {
   });
 
   describe('regions', function() {
+    it('should get a list of regions', function(done) {
+      compute.getRegions(function(err, regions) {
+        assert.ifError(err);
+        assert(regions.length > 0);
+        done();
+      });
+    });
+
+    it('should get a list of regions in stream mode', function(done) {
+      var resultsMatched = 0;
+
+      compute.getRegions()
+        .on('error', done)
+        .on('data', function() {
+          resultsMatched++;
+        })
+        .on('end', function() {
+          assert(resultsMatched > 0);
+          done();
+        });
+    });
+
     it('should get a list of addresses', function(done) {
       region.getOperations(function(err, addresses) {
         assert.ifError(err);
@@ -420,6 +442,28 @@ describe('Compute', function() {
   });
 
   describe('zones', function() {
+    it('should get a list of zones', function(done) {
+      compute.getZones(function(err, zones) {
+        assert.ifError(err);
+        assert(zones.length > 0);
+        done();
+      });
+    });
+
+    it('should get a list of zones in stream mode', function(done) {
+      var resultsMatched = 0;
+
+      compute.getZones()
+        .on('error', done)
+        .on('data', function() {
+          resultsMatched++;
+        })
+        .on('end', function() {
+          assert(resultsMatched > 0);
+          done();
+        });
+    });
+
     it('should get a list of disks', function(done) {
       zone.getDisks(function(err, disks) {
         assert.ifError(err);
