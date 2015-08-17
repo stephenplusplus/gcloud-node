@@ -454,6 +454,63 @@ describe('Compute', function() {
     it('should access a VM through a Zone', function(done) {
       zone.vm(VM_NAME).getMetadata(done);
     });
+
+    it('should attach and detach a disk', function(done) {
+      compute.getDisks()
+        .on('error', done)
+        .once('data', function(disk) {
+          this.end();
+
+          vm.attachDisk(disk, function(err) {
+            assert.ifError(err);
+
+            vm.detachDisk(disk, function(err, operation) {
+              assert.ifError(err);
+              operation.onComplete(done);
+            });
+          });
+        });
+    });
+
+    it('should get serial port output', function(done) {
+      vm.getSerialPortOutput(done);
+    });
+
+    it('should set tags', function(done) {
+      var newTagName = 'new-tag';
+
+      vm.getTags(function(err, tags, fingerprint) {
+        assert.ifError(err);
+
+        tags.push(newTagName);
+
+        vm.setTags(tags, fingerprint, function(err, operation) {
+          assert.ifError(err);
+
+          operation.onComplete(function(err) {
+            assert.ifError(err);
+
+            vm.getTags(function(err, tags) {
+              assert.ifError(err);
+              assert(tags.indexOf(newTagName) > -1);
+              done();
+            });
+          });
+        });
+      });
+    });
+
+    it('should reset', function(done) {
+      vm.reset(done);
+    });
+
+    it('should start', function(done) {
+      vm.start(done);
+    });
+
+    it('should stop', function(done) {
+      vm.stop(done);
+    });
   });
 
   describe('zones', function() {
