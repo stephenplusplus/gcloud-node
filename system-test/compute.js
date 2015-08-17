@@ -13,8 +13,7 @@ describe('Compute', function() {
   // to create a minimal amount of resources.
   //
   // Each `describe` block tests one object type. Before the tests run, the
-  // object is created. This takes the place of an "it should create _object_"
-  // test.
+  // object is created.
   //
   // The created object is then used and expected to exist for the rest of the
   // tests in that `describe` block.
@@ -49,6 +48,14 @@ describe('Compute', function() {
         assert.ifError(err);
         address = address_;
         operation.onComplete(done);
+      });
+    });
+
+    it('should have created the address', function(done) {
+      address.getMetadata(function(err, metadata) {
+        assert.ifError(err);
+        assert.strictEqual(metadata.name, ADDRESS_NAME);
+        done();
       });
     });
 
@@ -94,6 +101,14 @@ describe('Compute', function() {
         assert.ifError(err);
         disk = disk_;
         operation.onComplete(done);
+      });
+    });
+
+    it('should have created the disk', function(done) {
+      disk.getMetadata(function(err, metadata) {
+        assert.ifError(err);
+        assert.strictEqual(metadata.name, DISK_NAME);
+        done();
       });
     });
 
@@ -400,8 +415,8 @@ describe('Compute', function() {
         }
 
         operation.onComplete({
-          maxAttempts: MAX_TIME_ALLOWED / 5000,
-          interval: 5000
+          maxAttempts: MAX_TIME_ALLOWED / 10000,
+          interval: 10000
         }, done);
       });
     });
