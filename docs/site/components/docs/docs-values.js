@@ -226,6 +226,6 @@ angular.module('gcloud.docs')
       '>=0.18.0': ['dns'],
 
       // introduce compute api.
-      '>=0.19.0': ['compute']
+      '>=0.20.0': ['compute']
     }
   });
