@@ -16,10 +16,174 @@
 
 'use strict';
 
+var Address = require('../../lib/compute/address');
 var assert = require('assert');
 
 describe('Address', function() {
+  var address;
+
+  var ADDRESS_NAME = 'fuzzy-penguin';
+  var REGION = {};
+
+  beforeEach(function() {
+    address = new Address(REGION, ADDRESS_NAME);
+  });
+
   describe('instantiation', function() {
-    assert(true);
+    it('should localize region and name', function() {
+      assert.strictEqual(address.region, REGION);
+      assert.strictEqual(address.name, ADDRESS_NAME);
+    });
+  });
+
+  describe('delete', function() {
+    it('should make the correct API request', function(done) {
+      address.makeReq_ = function(method, path, query, body) {
+        assert.strictEqual(method, 'DELETE');
+        assert.strictEqual(path, '');
+        assert.strictEqual(query, null);
+        assert.strictEqual(body, null);
+        done();
+      };
+
+      address.delete(assert.ifError);
+    });
+
+    describe('success', function() {
+      var apiResponse = {
+        name: 'op-name'
+      };
+
+      beforeEach(function() {
+        address.makeReq_ = function(method, path, query, body, callback) {
+          callback(null, apiResponse);
+        };
+      });
+
+      it('should execute callback with Operation & Response', function(done) {
+        var operation = {};
+
+        address.region.operation = function(name) {
+          assert.strictEqual(name, apiResponse.name);
+          return operation;
+        };
+
+        address.delete(function(err, operation_, apiResponse_) {
+          assert.ifError(err);
+          assert.strictEqual(operation_, operation);
+          assert.strictEqual(apiResponse_, apiResponse);
+          done();
+        });
+      });
+    });
+
+    describe('error', function() {
+      var error = new Error('Error.');
+      var apiResponse = { a: 'b', c: 'd' };
+
+      beforeEach(function() {
+        address.makeReq_ = function(method, path, query, body, callback) {
+          callback(error, apiResponse);
+        };
+      });
+
+      it('should return an error if the request fails', function(done) {
+        address.delete(function(err, operation, apiResponse_) {
+          assert.strictEqual(err, error);
+          assert.strictEqual(operation, null);
+          assert.strictEqual(apiResponse_, apiResponse);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('getMetadata', function() {
+    it('should make the correct API request', function(done) {
+      address.makeReq_ = function(method, path, query, body) {
+        assert.strictEqual(method, 'GET');
+        assert.strictEqual(path, '');
+        assert.strictEqual(query, null);
+        assert.strictEqual(body, null);
+
+        done();
+      };
+
+      address.getMetadata(assert.ifError);
+    });
+
+    describe('success', function() {
+      var apiResponse = { a: 'b', c: 'd' };
+
+      beforeEach(function() {
+        address.makeReq_ = function(method, path, query, body, callback) {
+          callback(null, apiResponse);
+        };
+      });
+
+      it('should update the metadata to the API response', function(done) {
+        address.getMetadata(function(err) {
+          assert.ifError(err);
+          assert.strictEqual(address.metadata, apiResponse);
+          done();
+        });
+      });
+
+      it('should exec callback with metadata and API response', function(done) {
+        address.getMetadata(function(err, metadata, apiResponse_) {
+          assert.ifError(err);
+          assert.strictEqual(metadata, apiResponse);
+          assert.strictEqual(apiResponse_, apiResponse);
+          done();
+        });
+      });
+    });
+
+    describe('error', function() {
+      var error = new Error('Error.');
+      var apiResponse = { a: 'b', c: 'd' };
+
+      beforeEach(function() {
+        address.makeReq_ = function(method, path, query, body, callback) {
+          callback(error, apiResponse);
+        };
+      });
+
+      it('should execute callback with error and API response', function(done) {
+        address.getMetadata(function(err, metadata, apiResponse_) {
+          assert.strictEqual(err, error);
+          assert.strictEqual(metadata, null);
+          assert.strictEqual(apiResponse_, apiResponse);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('makeReq_', function() {
+    it('should make the correct request to Compute', function(done) {
+      var expectedPathPrefix = '/addresses/' + address.name;
+
+      var method = 'POST';
+      var path = '/test';
+      var query = {
+        a: 'b',
+        c: 'd'
+      };
+      var body = {
+        a: 'b',
+        c: 'd'
+      };
+
+      address.region.makeReq_ = function(method_, path_, query_, body_, cb) {
+        assert.strictEqual(method_, method);
+        assert.strictEqual(path_, expectedPathPrefix + path);
+        assert.strictEqual(query_, query);
+        assert.strictEqual(body_, body);
+        cb();
+      };
+
+      address.makeReq_(method, path, query, body, done);
+    });
   });
 });
