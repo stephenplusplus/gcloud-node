@@ -198,6 +198,7 @@ describe('VM', function() {
       it('should execute callback with error and API response', function(done) {
         vm.getMetadata(function(err, metadata, apiResponse_) {
           assert.strictEqual(err, error);
+          assert.strictEqual(metadata, null);
           assert.strictEqual(apiResponse_, apiResponse);
           done();
         });
@@ -490,6 +491,7 @@ describe('VM', function() {
     it('should execute callback with error & API response', function(done) {
       vm.makeReq_('POST', '/', {}, {}, function(err, operation, resp) {
         assert.strictEqual(err, error);
+        assert.strictEqual(operation, null);
         assert.strictEqual(resp, apiResponse);
         done();
       });

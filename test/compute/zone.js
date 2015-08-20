@@ -235,6 +235,8 @@ describe('Zone', function() {
         it('should execute callback with error & API response', function(done) {
           zone.createDisk(NAME, CONFIG, function(err, disk, op, apiResp) {
             assert.strictEqual(err, error);
+            assert.strictEqual(disk, null);
+            assert.strictEqual(op, null);
             assert.strictEqual(apiResp, apiResponse);
             done();
           });
@@ -524,6 +526,8 @@ describe('Zone', function() {
         it('should execute callback with error & API response', function(done) {
           zone.createVM(NAME, CONFIG, function(err, vm, op, apiResp) {
             assert.strictEqual(err, error);
+            assert.strictEqual(vm, null);
+            assert.strictEqual(op, null);
             assert.strictEqual(apiResp, apiResponse);
             done();
           });
@@ -618,6 +622,8 @@ describe('Zone', function() {
       it('should execute callback with error & API response', function(done) {
         zone.getDisks({}, function(err, disks, nextQuery, apiResp) {
           assert.strictEqual(err, error);
+          assert.strictEqual(disks, null);
+          assert.strictEqual(nextQuery, null);
           assert.strictEqual(apiResp, apiResponse);
           done();
         });
@@ -708,6 +714,7 @@ describe('Zone', function() {
       it('should execute callback with error and API response', function(done) {
         zone.getMetadata(function(err, metadata, apiResponse_) {
           assert.strictEqual(err, error);
+          assert.strictEqual(metadata, null);
           assert.strictEqual(apiResponse_, apiResponse);
           done();
         });
@@ -780,6 +787,7 @@ describe('Zone', function() {
       it('should execute callback with error & API response', function(done) {
         zone.getOperations({}, function(err, operations, nextQuery, apiResp) {
           assert.strictEqual(err, error);
+          assert.strictEqual(nextQuery, null);
           assert.strictEqual(apiResp, apiResponse);
           done();
         });
@@ -881,6 +889,7 @@ describe('Zone', function() {
       it('should execute callback with error & API response', function(done) {
         zone.getVMs({}, function(err, vms, nextQuery, apiResponse_) {
           assert.strictEqual(err, error);
+          assert.strictEqual(nextQuery, null);
           assert.strictEqual(apiResponse_, apiResponse);
           done();
         });

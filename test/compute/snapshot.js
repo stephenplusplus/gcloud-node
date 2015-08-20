@@ -147,6 +147,7 @@ describe('Snapshot', function() {
       it('should execute callback with error and API response', function(done) {
         snapshot.getMetadata(function(err, metadata, apiResponse_) {
           assert.strictEqual(err, error);
+          assert.strictEqual(metadata, null);
           assert.strictEqual(apiResponse_, apiResponse);
           done();
         });
