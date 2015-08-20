@@ -152,6 +152,12 @@ describe('Snapshot', function() {
           done();
         });
       });
+
+      it('should not require a callback', function() {
+        assert.doesNotThrow(function() {
+          snapshot.getMetadata();
+        });
+      });
     });
 
     describe('success', function() {
@@ -177,6 +183,12 @@ describe('Snapshot', function() {
           assert.strictEqual(metadata, apiResponse);
           assert.strictEqual(apiResponse_, apiResponse);
           done();
+        });
+      });
+
+      it('should not require a callback', function() {
+        assert.doesNotThrow(function() {
+          snapshot.getMetadata();
         });
       });
     });

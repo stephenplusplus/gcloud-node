@@ -16,13 +16,13 @@
 
 'use strict';
 
-var Address = require('../../lib/compute/address');
 var assert = require('assert');
+var Address = require('../../lib/compute/address');
 
 describe('Address', function() {
   var address;
 
-  var ADDRESS_NAME = 'fuzzy-penguin';
+  var ADDRESS_NAME = 'us-central1';
   var REGION = {};
 
   beforeEach(function() {
@@ -30,9 +30,17 @@ describe('Address', function() {
   });
 
   describe('instantiation', function() {
-    it('should localize region and name', function() {
+    it('should localize the region', function() {
       assert.strictEqual(address.region, REGION);
+    });
+
+    it('should localize the name', function() {
       assert.strictEqual(address.name, ADDRESS_NAME);
+    });
+
+    it('should default metadata to an empty object', function() {
+      assert.strictEqual(typeof address.metadata, 'object');
+      assert.strictEqual(Object.keys(address.metadata).length, 0);
     });
   });
 
@@ -47,6 +55,32 @@ describe('Address', function() {
       };
 
       address.delete(assert.ifError);
+    });
+
+    describe('error', function() {
+      var error = new Error('Error.');
+      var apiResponse = { a: 'b', c: 'd' };
+
+      beforeEach(function() {
+        address.makeReq_ = function(method, path, query, body, callback) {
+          callback(error, apiResponse);
+        };
+      });
+
+      it('should return an error if the request fails', function(done) {
+        address.delete(function(err, operation, apiResponse_) {
+          assert.strictEqual(err, error);
+          assert.strictEqual(operation, null);
+          assert.strictEqual(apiResponse_, apiResponse);
+          done();
+        });
+      });
+
+      it('should not require a callback', function() {
+        assert.doesNotThrow(function() {
+          address.delete();
+        });
+      });
     });
 
     describe('success', function() {
@@ -75,24 +109,10 @@ describe('Address', function() {
           done();
         });
       });
-    });
 
-    describe('error', function() {
-      var error = new Error('Error.');
-      var apiResponse = { a: 'b', c: 'd' };
-
-      beforeEach(function() {
-        address.makeReq_ = function(method, path, query, body, callback) {
-          callback(error, apiResponse);
-        };
-      });
-
-      it('should return an error if the request fails', function(done) {
-        address.delete(function(err, operation, apiResponse_) {
-          assert.strictEqual(err, error);
-          assert.strictEqual(operation, null);
-          assert.strictEqual(apiResponse_, apiResponse);
-          done();
+      it('should not require a callback', function() {
+        assert.doesNotThrow(function() {
+          address.delete();
         });
       });
     });
@@ -110,6 +130,32 @@ describe('Address', function() {
       };
 
       address.getMetadata(assert.ifError);
+    });
+
+    describe('error', function() {
+      var error = new Error('Error.');
+      var apiResponse = { a: 'b', c: 'd' };
+
+      beforeEach(function() {
+        address.makeReq_ = function(method, path, query, body, callback) {
+          callback(error, apiResponse);
+        };
+      });
+
+      it('should execute callback with error and API response', function(done) {
+        address.getMetadata(function(err, metadata, apiResponse_) {
+          assert.strictEqual(err, error);
+          assert.strictEqual(metadata, null);
+          assert.strictEqual(apiResponse_, apiResponse);
+          done();
+        });
+      });
+
+      it('should not require a callback', function() {
+        assert.doesNotThrow(function() {
+          address.getMetadata();
+        });
+      });
     });
 
     describe('success', function() {
@@ -137,24 +183,10 @@ describe('Address', function() {
           done();
         });
       });
-    });
 
-    describe('error', function() {
-      var error = new Error('Error.');
-      var apiResponse = { a: 'b', c: 'd' };
-
-      beforeEach(function() {
-        address.makeReq_ = function(method, path, query, body, callback) {
-          callback(error, apiResponse);
-        };
-      });
-
-      it('should execute callback with error and API response', function(done) {
-        address.getMetadata(function(err, metadata, apiResponse_) {
-          assert.strictEqual(err, error);
-          assert.strictEqual(metadata, null);
-          assert.strictEqual(apiResponse_, apiResponse);
-          done();
+      it('should not require a callback', function() {
+        assert.doesNotThrow(function() {
+          address.getMetadata();
         });
       });
     });
