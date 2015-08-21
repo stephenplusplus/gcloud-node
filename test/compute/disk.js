@@ -65,7 +65,7 @@ describe('Disk', function() {
         return formattedName;
       };
 
-      disk = new Disk(ZONE, DISK_NAME);
+      var disk = new Disk(ZONE, DISK_NAME);
       assert(disk.formattedName, formattedName);
     });
   });
