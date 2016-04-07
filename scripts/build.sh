@@ -17,8 +17,11 @@
 set -ev
 
 npm run lint
-# generates docs and runs tests
-npm run test
+npm run test # generates docs and runs tests
+
+if [ "${TRAVIS_PULL_REQUEST}" == "true" ]; then
+  npm run coveralls-unit
+fi
 
 # if merging to master and not a pull request, execute system tests, create coverage report and update docs
 if [ "${TRAVIS_BRANCH}" == "master" ] && [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
