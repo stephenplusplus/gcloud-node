@@ -157,4 +157,18 @@ describe('GrpcServiceObject', function() {
       grpcServiceObject.requestStream(PROTO_OPTS, REQ_OPTS);
     });
   });
+
+  describe('requestWritableStream', function() {
+    it('should call the parent requestWritableStream method', function(done) {
+      grpcServiceObject.parent = {
+        requestWritableStream: function(protoOpts, reqOpts) {
+          assert.strictEqual(protoOpts, PROTO_OPTS);
+          assert.strictEqual(reqOpts, REQ_OPTS);
+          done();
+        }
+      };
+
+      grpcServiceObject.requestWritableStream(PROTO_OPTS, REQ_OPTS);
+    });
+  });
 });

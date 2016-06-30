@@ -21,6 +21,7 @@
 'use strict';
 
 var dotProp = require('dot-prop');
+var duplexify = require('duplexify');
 var extend = require('extend');
 var googleProtoFiles = require('google-proto-files');
 var grpc = require('grpc');
@@ -274,7 +275,7 @@ GrpcService.prototype.request = function(protoOpts, reqOpts, callback) {
  * Make an authenticated streaming request with gRPC.
  *
  * @param {object} protoOpts - The proto options.
- * @param {string} protoOpts.service - The service git stat.
+ * @param {string} protoOpts.service - The service.
  * @param {string} protoOpts.method - The method name.
  * @param {number=} protoOpts.timeout - After how many milliseconds should the
  *     request cancel.
@@ -346,6 +347,64 @@ GrpcService.prototype.requestStream = function(protoOpts, reqOpts) {
       stream.destroy(grpcError || err);
     })
     .pipe(stream);
+};
+
+/**
+ * Make an authenticated writable streaming request with gRPC.
+ *
+ * @param {object} protoOpts - The proto options.
+ * @param {string} protoOpts.service - The service.
+ * @param {string} protoOpts.method - The method name.
+ * @param {number=} protoOpts.timeout - After how many milliseconds should the
+ *     request cancel.
+ * @param {object} reqOpts - The request options.
+ */
+GrpcService.prototype.requestWritableStream = function(protoOpts, reqOpts) {
+  var stream = protoOpts.stream = protoOpts.stream || duplexify.obj();
+
+  if (global.GCLOUD_SANDBOX_ENV) {
+    return stream;
+  }
+
+  var self = this;
+
+  if (!this.grpcCredentials) {
+    // We must establish an authClient to give to grpc.
+    this.getGrpcCredentials_(function(err, credentials) {
+      if (err) {
+        stream.destroy(err);
+        return;
+      }
+
+      self.grpcCredentials = credentials;
+      self.requestWritableStream(protoOpts, reqOpts);
+    });
+
+    return stream;
+  }
+
+  var service = this.getService_(protoOpts);
+  var grpcOpts = {};
+
+  if (is.number(protoOpts.timeout)) {
+    grpcOpts.deadline = GrpcService.createDeadline_(protoOpts.timeout);
+  }
+
+  var grpcStream = service[protoOpts.method](reqOpts, grpcOpts);
+  stream.setReadable(grpcStream);
+  stream.setWritable(grpcStream);
+
+  grpcStream
+    .on('status', function(status) {
+      var grcpStatus = GrpcService.decorateStatus_(status);
+      stream.emit('response', grcpStatus || status);
+    })
+    .on('error', function(err) {
+      var grpcError = GrpcService.decorateError_(err);
+      stream.destroy(grpcError || err);
+    });
+
+  return stream;
 };
 
 /**
@@ -677,7 +736,7 @@ GrpcService.prototype.loadProtoFile_ = function(protoConfig, config) {
   var apiVersion = protoConfig.apiVersion || config.apiVersion;
   var service = dotProp.get(services.google, serviceName);
 
-  return service[apiVersion];
+  return is.undef(apiVersion) ? service : service[apiVersion];
 };
 
 /**
