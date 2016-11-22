@@ -20,9 +20,6 @@
 
 'use strict';
 
-var IS_APP_ENGINE = !!(process.env.GAE_SERVICE || process.env.GAE_MODULE_NAME);
-var IS_CLOUD_FUNCTION = !!process.env.FUNCTION_NAME;
-
 /**
  * The Metadata class attempts to contact the metadata service and determine,
  * based on request success and environment variables, what type of resource
