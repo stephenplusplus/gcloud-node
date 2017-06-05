@@ -22,18 +22,11 @@
 /**
  * The request for {@link Datastore.Lookup}.
  *
- * @property {string} projectId
- *   The ID of the project against which to make the request.
- *
- * @property {Object} readOptions
- *   The options for this lookup request.
- *
- *   This object should have the same structure as [ReadOptions]{@link ReadOptions}
- *
- * @property {Object[]} keys
- *   Keys of entities to look up.
- *
- *   This object should have the same structure as [Key]{@link Key}
+ * @property {string} projectId - The ID of the project against which to make the request.
+ * @property {Object} readOptions - The options for this lookup request.
+ *     This object should have the same structure as [ReadOptions]{@link ReadOptions}
+ * @property {Object[]} keys Keys of entities to look up.
+ *     This object should have the same structure as [Key]{@link Key}
  *
  * @class
  * @see [google.datastore.v1.LookupRequest definition in proto format]{@link https://github.com/googleapis/googleapis/blob/master/google/datastore/v1/datastore.proto}
@@ -45,14 +38,14 @@ var LookupRequest = {
 /**
  * The response for {@link Datastore.Lookup}.
  *
- * @property {Object[]} found
+ * @param {Object[]} found
  *   Entities found as `ResultType.FULL` entities. The order of results in this
  *   field is undefined and has no relation to the order of the keys in the
  *   input.
  *
  *   This object should have the same structure as [EntityResult]{@link EntityResult}
  *
- * @property {Object[]} missing
+ * @param {Object[]} missing
  *   Entities not found as `ResultType.KEY_ONLY` entities. The order of results
  *   in this field is undefined and has no relation to the order of the keys
  *   in the input.

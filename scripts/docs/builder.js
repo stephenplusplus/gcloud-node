@@ -76,7 +76,13 @@ Builder.prototype.build = function() {
   mkdir('-p', this.dir);
   cp(MARKDOWN, this.dir);
 
-  var docs = globby.sync(path.join(this.name, 'src/*.js'), {
+  var docsPaths = [
+    path.join(this.name, 'src/*.js'),
+    path.join(this.name, 'src/**/v*/doc/*.js'),
+    path.join(this.name, 'src/**/v*/*_client.js')
+  ];
+
+  var docs = globby.sync(docsPaths, {
     cwd: PACKAGES_ROOT,
     ignore: config.IGNORE
   }).map(function(file) {
