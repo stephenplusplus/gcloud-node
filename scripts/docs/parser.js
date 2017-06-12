@@ -55,15 +55,13 @@ function detectLinks(str) {
 function formatHtml(html) {
   var formatted = (html || '')
     .replace(/\s+/g, ' ')
-    .replace(/<br *\/*>/g, ' ')
+    .replace(/<br *\/*>/g, ' ') /* TODO: remove. fixing a sublime text bug */
     .replace(/`([^`]*)`/g, '<code>$1</code>');
 
   return detectLinks(detectCustomType(formatted));
 }
 
 function detectCustomType(str) {
-  var isTest = str === '<p>Build a new instance of {@link DatastoreClient}.</p>'
-
   var tmpl = '<a data-custom-type="{module}" data-method="{method}">{text}</a>';
   var templateFn = format.bind(null, tmpl);
   var rCustomType = /\{*module\:([^\}|\>]*)\}*/g;
@@ -84,7 +82,6 @@ function detectCustomType(str) {
       });
     })
     .replace(rProtoType, function(match, protoType) {
-      console.log(protoType)
       return templateFn({
         module: 'link://protoType',
         method: protoType,
@@ -268,6 +265,16 @@ function createMethod(fileName, parent, block) {
   var allParams = getTagsByType(block, 'param')
     .concat(getTagsByType(block, 'property'))
     .map(createParam);
+
+  var isGapic = fileName.includes('doc_');
+  var isRequestOrResponse =
+    name && (name.includes('Request') || name.includes('Response'));
+
+  if (isGapic && isRequestOrResponse) {
+    // Ignore descriptions that have links we don't want, e.g.
+    // "The request for {@link Datastore.AllocateIds}."
+    block.description = {};
+  }
 
   return {
     id: name,
