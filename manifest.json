@@ -188,7 +188,6 @@
       "name": "@google-cloud/language",
       "defaultService": "language",
       "versions": [
-        "0.11.0",
         "0.10.6",
         "0.10.3",
         "0.10.2",
@@ -342,7 +341,6 @@
       "name": "@google-cloud/speech",
       "defaultService": "speech",
       "versions": [
-        "0.10.2",
         "0.10.0",
         "0.9.4",
         "0.9.1",
@@ -400,7 +398,6 @@
       "name": "@google-cloud/video-intelligence",
       "defaultService": "video-intelligence",
       "versions": [
-        "0.2.0",
         "0.1.1",
         "0.1.0"
       ]
@@ -410,7 +407,6 @@
       "name": "@google-cloud/vision",
       "defaultService": "vision",
       "versions": [
-        "0.12.0",
         "0.11.4",
         "0.11.0",
         "0.10.0",
